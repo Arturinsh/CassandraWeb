@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Cassandra;
+using CassandraWebTest.Models;
 
 namespace CassandraWebTest.DAO
 {
@@ -34,11 +35,15 @@ namespace CassandraWebTest.DAO
             if (Cluster == null)
             {
                 SetCluster();
-                Session = Cluster.Connect();
+                Session = Cluster.Connect("test_keyspace");
+                Session.UserDefinedTypes.Define(
+                    UdtMap.For<Article>());
             }
             else if (Session == null)
             {
-                Session = Cluster.Connect();
+                Session = Cluster.Connect("test_keyspace");
+                Session.UserDefinedTypes.Define(
+                    UdtMap.For<Article>());
             }
 
             return Session;

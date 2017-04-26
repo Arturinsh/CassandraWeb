@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Cassandra.Mapping.Attributes;
+using Cassandra;
 
 namespace CassandraWebTest.Models
 {
@@ -14,5 +15,13 @@ namespace CassandraWebTest.Models
         public string password { get; set; }
         public string fbkey { get; set; }
         public string gkey { get; set; }
+        public List<Article> articles { get; set; }
+    }
+
+    public class Article
+    {
+        public string Title { get; set; }
+        public string Content { get; set; }
+        public LocalDate Released { get; set; }
     }
 }
