@@ -186,7 +186,6 @@ namespace CassandraWebTest.Controllers
 
                     HttpContext.GetOwinContext().Authentication.SignIn(
                         new AuthenticationProperties { IsPersistent = false }, ident);
-                    var test = User;
                     return RedirectToAction("Index", "Home");
                     //await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
@@ -362,18 +361,10 @@ namespace CassandraWebTest.Controllers
                 return RedirectToAction("Login");
             }
 
-            //if (loginInfo.Login.LoginProvider == "Facebook")
-            //{
-            //    var identity = AuthenticationManager.GetExternalIdentity(DefaultAuthenticationTypes.ExternalCookie);
-            //    var access_token = identity.FindFirstValue("FacebookAccessToken");
-            //    var fb = new FacebookClient(access_token);
-            //    var test = fb.Get("/me?fields=id,email,name");
-            //    dynamic myInfo = fb.Get("/me?fields=email"); // specify the email field
-            //    loginInfo.Email = myInfo.email;
-            //}
-
             // Sign in the user with this external login provider if the user already has a login
-            var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
+
+            //var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
+            var result = new MyUserManager().ExternalSignIn(loginInfo, HttpContext);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -412,15 +403,21 @@ namespace CassandraWebTest.Controllers
                     return View("ExternalLoginFailure");
                 }
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user);
+                //var result = await UserManager.CreateAsync(user);
+                var result = new MyUserManager().AddExternalLogin(info, user);
                 if (result.Succeeded)
                 {
-                    result = await UserManager.AddLoginAsync(user.Id, info.Login);
-                    if (result.Succeeded)
-                    {
-                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                        return RedirectToLocal(returnUrl);
-                    }
+                    var ident = new ClaimsIdentity(
+                     new[] {
+                        new Claim(ClaimTypes.NameIdentifier, user.Email),
+                        new Claim("http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider", "ASP.NET Identity", "http://www.w3.org/2001/XMLSchema#string"),
+                        new Claim(ClaimTypes.Name, user.Email)
+                     }, DefaultAuthenticationTypes.ApplicationCookie);
+
+                    HttpContext.GetOwinContext().Authentication.SignIn(
+                     new AuthenticationProperties { IsPersistent = false }, ident);
+
+                    return RedirectToLocal(returnUrl);
                 }
                 AddErrors(result);
             }

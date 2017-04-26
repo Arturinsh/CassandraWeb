@@ -27,6 +27,10 @@ namespace CassandraWebTest.DAO
         UsersModels updateUser(UsersModels user);
 
         UsersModels FindById(string id);
+
+        UsersModels FindByFacebookKey(string key);
+
+        UsersModels FindByGoogleKey(string key);
     }
 
     public class UsersDAO : IUsersDAO
@@ -82,13 +86,24 @@ namespace CassandraWebTest.DAO
 
         public UsersModels updateUser(UsersModels user)
         {
-            mapper.Update<UsersModels>("SET username = ?, password = ? WHERE id = ?", user.username, user.password, user.id);
+            mapper.Update<UsersModels>("SET username = ?, password = ?, fbkey = ?, gkey = ? WHERE id = ?", 
+                user.username, user.password, user.fbkey, user.gkey, user.id);
             return user;
         }
 
         public UsersModels FindById(string id)
         {
             return mapper.FirstOrDefault<UsersModels>("WHERE id = ?", new Guid(id));
+        }
+
+        public UsersModels FindByFacebookKey(string key)
+        {
+            return mapper.FirstOrDefault<UsersModels>("WHERE fbkey = ?", key);
+        }
+
+        public UsersModels FindByGoogleKey(string key)
+        {
+            return mapper.FirstOrDefault<UsersModels>("WHERE gkey = ?", key);
         }
     }
 }

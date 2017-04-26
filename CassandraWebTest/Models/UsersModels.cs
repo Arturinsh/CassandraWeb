@@ -12,5 +12,7 @@ namespace CassandraWebTest.Models
         public Guid id { get; set; }
         public string username { get; set; }
         public string password { get; set; }
+        public string fbkey { get; set; }
+        public string gkey { get; set; }
     }
 }
