@@ -20,8 +20,13 @@ namespace CassandraWebTest.Models
     [Table("test_keyspace.articles")]
     public class ArticlesModels
     {
+        private DateTimeOffset utcTimestamp;
         public Guid id { get; set; }
-        public DateTimeOffset timestamp { get; set; }
+        public DateTimeOffset timestamp
+        {
+            get { return utcTimestamp.ToLocalTime(); }
+            set { this.utcTimestamp = value; }
+        }
         public int view_count { get; set; }
         public string author { get; set; }
         public string title { get; set; }

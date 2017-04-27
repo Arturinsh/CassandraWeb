@@ -37,8 +37,6 @@ namespace CassandraWebTest.Api
             return false;
         }
 
-        [System.Web.Http.HttpGet]
-        [System.Web.Mvc.Route("api/Test/List")]
         public async Task<IEnumerable<UsersModels>> Get()
         {
             IEnumerable<UsersModels> users = await usersDao.getUsers();
