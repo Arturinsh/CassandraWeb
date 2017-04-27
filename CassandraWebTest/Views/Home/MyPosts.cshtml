@@ -1,8 +1,9 @@
 ﻿@model IEnumerable<CassandraWebTest.Models.ArticlesModels>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "My Posts";
 }
+
 <div class="row>">
     <div class="list-group">
         @foreach (var item in Model)
@@ -12,31 +13,23 @@
                     @Html.DisplayFor(modelItem => item.title)
                 </h1>
                 <h4>
-                        @if (User.Identity.Name == item.author)
-                        {
-                            <span class="label label-success">
-                                Author: YOU
-                            </span>
-                        }
-                        else
-                        {
-                            <span class="label label-info">
-                                Author: @Html.DisplayFor(modelItem => item.author)
-                            </span>
-                        }
+                    <span class="label label-success">
+                        Author: YOU
+                    </span>
                     <span class="label label-default">
-                       Clicked: @Html.DisplayFor(modelItem => item.view_count)
+                        Clicked: @Html.DisplayFor(modelItem => item.view_count)
                     </span>
                 </h4>
                 <h6>Posted: @Html.DisplayFor(modelItem => item.timestamp.DateTime) </h6>
-                
             </a>
         }
         @if (Model.Count() < 1)
         {
             <div class="list-group-item text-center">
-                <h1>Nobody has posted yet :(</h1>
+                <h1>You do not have any post posted</h1>
             </div>
         }
     </div>
 </div>
+
+

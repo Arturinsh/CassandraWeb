@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Mvc;
 
 namespace CassandraWebTest.Api
 {
@@ -24,6 +23,18 @@ namespace CassandraWebTest.Api
                 }
                 return dao;
             }
+        }
+
+        public class testUser
+        {
+            public string username { get; set; }
+            public string password { get; set; }
+        }
+
+        [HttpPost]
+        public bool TestPost(testUser user)
+        {
+            return false;
         }
 
         [System.Web.Http.HttpGet]
@@ -44,6 +55,6 @@ namespace CassandraWebTest.Api
         public string Get(int id)
         {
             return "value";
-        }   
+        }
     }
 }

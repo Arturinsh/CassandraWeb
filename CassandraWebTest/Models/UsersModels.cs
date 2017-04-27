@@ -15,13 +15,36 @@ namespace CassandraWebTest.Models
         public string password { get; set; }
         public string fbkey { get; set; }
         public string gkey { get; set; }
-        public List<Article> articles { get; set; }
     }
 
-    public class Article
+    [Table("test_keyspace.articles")]
+    public class ArticlesModels
     {
-        public string Title { get; set; }
-        public string Content { get; set; }
-        public LocalDate Released { get; set; }
+        public Guid id { get; set; }
+        public DateTimeOffset timestamp { get; set; }
+        public int view_count { get; set; }
+        public string author { get; set; }
+        public string title { get; set; }
+        public string content { get; set; }
+        public List<Comment> comments { get; set; }
+    }
+
+    public class Comment
+    {
+        public Guid id { get; set; }
+        public string author { get; set; }
+        public string commentary { get; set; }
+        public IEnumerable<Vote> votes { get; set; }
+
+        public Comment()
+        {
+            id = Guid.NewGuid();
+        }
+    }
+
+    public class Vote
+    {
+        public string username { get; set; }
+        public int vote { get; set; }
     }
 }

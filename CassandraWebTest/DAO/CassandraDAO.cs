@@ -37,13 +37,13 @@ namespace CassandraWebTest.DAO
                 SetCluster();
                 Session = Cluster.Connect("test_keyspace");
                 Session.UserDefinedTypes.Define(
-                    UdtMap.For<Article>());
+                  UdtMap.For<Vote>(),  UdtMap.For<Comment>());
             }
             else if (Session == null)
             {
                 Session = Cluster.Connect("test_keyspace");
                 Session.UserDefinedTypes.Define(
-                    UdtMap.For<Article>());
+                   UdtMap.For<Vote>(), UdtMap.For<Comment>());
             }
 
             return Session;

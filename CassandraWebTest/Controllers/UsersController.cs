@@ -10,6 +10,7 @@ using System.Web.Mvc;
 namespace CassandraWebTest.Controllers
 {
     [RequireHttps]
+    [Authorize(Roles ="Admin")]
     public class UsersController : Controller
     {
         private static IUsersDAO dao;
@@ -45,8 +46,7 @@ namespace CassandraWebTest.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(UsersModels model)
         {
-            UsersModels test = new UsersModels() { username = "cat"};
-            await usersDao.addUser(test);
+            await usersDao.addUser(model);
             return RedirectToAction("Index");
         }
 
