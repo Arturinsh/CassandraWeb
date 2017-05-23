@@ -15,6 +15,7 @@ namespace CassandraWebTest.Models
         public string password { get; set; }
         public string fbkey { get; set; }
         public string gkey { get; set; }
+        public bool notification { get; set; }
     }
 
     [Table("test_keyspace.articles")]

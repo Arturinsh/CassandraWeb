@@ -13,6 +13,7 @@ namespace CassandraWebTest.Controllers
     public class HomeController : Controller
     {
         private static IArticlesDAO dao;
+        private static IUsersDAO uDao;
 
         protected IArticlesDAO articlesDao
         {
@@ -23,6 +24,18 @@ namespace CassandraWebTest.Controllers
                     dao = new ArticlesDAO();
                 }
                 return dao;
+            }
+        }
+
+        protected IUsersDAO usersDao
+        {
+            get
+            {
+                if (uDao == null)
+                {
+                    uDao = new UsersDAO();
+                }
+                return uDao;
             }
         }
 
@@ -74,6 +87,13 @@ namespace CassandraWebTest.Controllers
             model.timestamp = DateTimeOffset.Now;
             model.view_count = 0;
             await articlesDao.addArticle(model);
+
+            var articles = await articlesDao.getAuthorArticles(User.Identity.Name);
+
+            if (articles.Count() > 5)
+            {
+                await usersDao.SetUserNotification(User.Identity.Name, true);
+            }
             return RedirectToAction("Index");
         }
 
@@ -96,7 +116,6 @@ namespace CassandraWebTest.Controllers
             return RedirectToAction("MyPosts");
         }
 
-   
         [Authorize]
         public ActionResult EditPost(string id)
         {
@@ -155,6 +174,25 @@ namespace CassandraWebTest.Controllers
             articlesDao.updateArticle(post);
 
             return RedirectToAction("Watch", "Home", new { @id = postid });
+        }
+
+        public bool showNotification()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var user = usersDao.GetUserByName(User.Identity.Name);
+                return user.notification;
+            }
+            return false;
+        }
+
+        public async Task removeNotification()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var user = usersDao.GetUserByName(User.Identity.Name);
+                await usersDao.SetUserNotification(User.Identity.Name, false);
+            }
         }
 
         public ActionResult About()

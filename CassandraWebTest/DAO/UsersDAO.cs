@@ -31,6 +31,8 @@ namespace CassandraWebTest.DAO
         UsersModels FindByFacebookKey(string key);
 
         UsersModels FindByGoogleKey(string key);
+
+        Task SetUserNotification(string username, bool notification);
     }
 
     public class UsersDAO : IUsersDAO
@@ -105,6 +107,11 @@ namespace CassandraWebTest.DAO
         public UsersModels FindByGoogleKey(string key)
         {
             return mapper.FirstOrDefault<UsersModels>("WHERE gkey = ?", key);
+        }
+
+        public async Task SetUserNotification(string username, bool notification)
+        {
+            await mapper.UpdateAsync<UsersModels>("Set notification = ? WHERE id = ?", notification, GetUserByName(username).id);
         }
     }
 }

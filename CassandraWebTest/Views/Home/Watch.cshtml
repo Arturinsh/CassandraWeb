@@ -78,10 +78,8 @@
         @foreach (var comment in Model.comments)
         {
             <div class="list-group-item">
-                <h5 class="list-group-item-heading">@Html.DisplayFor(com => comment.author)</h5>
+                <h5 class="list-group-item-heading"><strong>@Html.DisplayFor(com => comment.author)</strong></h5>
                 <p class="list-group-item-text">@Html.DisplayFor(com => comment.commentary)</p>
-               
-
                     @{
                         int voteValue = 0;
                         int yourValue = 0;
@@ -112,9 +110,6 @@
                         }
                     }
                
-
-
-
                 <div class="btn-group btn-group-xs">
                     @if (yourValue != 1 && Request.IsAuthenticated)
                     {
