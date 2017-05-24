@@ -24,6 +24,7 @@
                     @if (Request.IsAuthenticated)
                     {
                         <li>@Html.ActionLink("MyPosts", "MyPosts", "Home")</li>
+                        <li class="hidden" id="reAddEmpl"><a href="#" onclick="reAddEmployees()">Re-add employees</a></li>
                         <li>@Html.ActionLink("Create Post", "CreatePost", "Home")</li>
                     }
                 </ul>
@@ -42,5 +43,28 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+    <script>
+        $(document).ready(function (){
+            $.ajax({
+                url: "/Home/showReaddEmployees", success: function (result) {
+                    if (result == "True") {
+                        $("#reAddEmpl").removeClass("hidden");
+                    }
+                }
+            });
+        });
+        function reAddEmployees() {
+            $.ajax({
+                url: "/Home/getReAddEmp", success: function (result) {
+                    //TODO /Home/testReAdd to another URL
+                    $.post("/Home/testReAdd", result, function (data, status) {
+                        $.post("/Home/setUserReEmployeeIds", data, function (data, status) {
+                            alert("new employees added");
+                        });
+                    });
+                }
+            });
+        }
+    </script>
 </body>
 </html>

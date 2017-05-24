@@ -19,4 +19,10 @@ namespace CassandraWebTest.Models
         public string Name { get; set; }
         public int Id { get; set; }
     }
+
+    public class EmployeeReAdd
+    {
+        public int EmployeeId { get; set; }
+        public List<Employee> Employees { get; set; }
+    }
 }

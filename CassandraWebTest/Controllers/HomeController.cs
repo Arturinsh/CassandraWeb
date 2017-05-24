@@ -241,13 +241,16 @@ namespace CassandraWebTest.Controllers
             }
         }
 
+        //TEST code
         [HttpPost]
         public JsonResult testCreateCompany(Company model)
         {
-            //TEST code
-            foreach (var emp in model.Employees)
+            if (model.Employees != null)
             {
-                emp.Id = 1;
+                foreach (var emp in model.Employees)
+                {
+                    emp.Id = 1;
+                }
             }
             return Json(model);
         }
@@ -277,6 +280,72 @@ namespace CassandraWebTest.Controllers
             }
             return Json(comments, JsonRequestBehavior.AllowGet);
         }
+
+        public bool showReaddEmployees()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var user = usersDao.GetUserByName(User.Identity.Name);
+                if (user.employeeid != 0)
+                    return true;
+            }
+            return false;
+        }
+
+        public async Task<JsonResult> getReAddEmp()
+        {
+            EmployeeReAdd reAddList = new EmployeeReAdd();
+            List<Employee> employees = new List<Employee>();
+            if (User.Identity.IsAuthenticated)
+            {
+                var articles = await articlesDao.getAuthorArticles(User.Identity.Name);
+                foreach (var article in articles)
+                {
+                    foreach (var comment in article.comments)
+                    {
+                        var user = usersDao.GetUserByName(comment.author);
+                        if (user.employeeid == 0)
+                        {
+                            if (!employees.Exists(x => x.Name == user.username))
+                            {
+                                employees.Add(new Employee() { Name = user.username });
+                            }
+                        }
+                    }
+                }
+                reAddList.EmployeeId = usersDao.GetUserByName(User.Identity.Name).employeeid;
+                reAddList.Employees = employees;
+            }
+            return Json(reAddList, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public void setUserReEmployeeIds(EmployeeReAdd model)
+        {
+            foreach (var emp in model.Employees)
+            {
+                var usr = usersDao.GetUserByName(emp.Name);
+                usr.employeeid = emp.Id;
+                usersDao.updateUser(usr);
+            }
+        }
+
+
+        //TEST code
+        [HttpPost]
+        public JsonResult testReAdd(EmployeeReAdd model)
+        {
+
+            if (model.Employees != null)
+            {
+                foreach (var emp in model.Employees)
+                {
+                    emp.Id = 2;
+                }
+            }
+            return Json(model);
+        }
+
 
         public ActionResult About()
         {

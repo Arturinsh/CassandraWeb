@@ -122,7 +122,9 @@
                         Password: $("#inputPassword").val(),
                         employees: result
                     };
+                    //TODO /Home/testCreateCompany to another URL
                     $.post("/Home/testCreateCompany", company, function (data, status) {
+
                         $.post("/Home/setUserEmployeeIds", data, function (data, status) {
                             alert("company created");
                         });
