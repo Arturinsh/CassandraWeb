@@ -90,10 +90,15 @@ namespace CassandraWebTest.Controllers
 
             var articles = await articlesDao.getAuthorArticles(User.Identity.Name);
 
-            if (articles.Count() > 5)
+            if (articles.Count() > 4)
             {
-                await usersDao.SetUserNotification(User.Identity.Name, true);
+                var user = usersDao.GetUserByName(User.Identity.Name);
+                if (user.employeeid == 0)
+                {
+                    await usersDao.SetUserNotification(User.Identity.Name, true);
+                }
             }
+
             return RedirectToAction("Index");
         }
 
@@ -193,6 +198,84 @@ namespace CassandraWebTest.Controllers
                 var user = usersDao.GetUserByName(User.Identity.Name);
                 await usersDao.SetUserNotification(User.Identity.Name, false);
             }
+        }
+
+        public async Task<JsonResult> getEmployees()
+        {
+            List<Employee> employees = new List<Employee>();
+            employees.Add(new Employee() { Name = User.Identity.Name });
+            if (User.Identity.IsAuthenticated)
+            {
+                var articles = await articlesDao.getAuthorArticles(User.Identity.Name);
+                foreach (var article in articles)
+                {
+                    foreach (var comment in article.comments)
+                    {
+                        var user = usersDao.GetUserByName(comment.author);
+                        if (user.employeeid == 0)
+                        {
+                            if (!employees.Exists(x => x.Name == user.username))
+                            {
+                                employees.Add(new Employee() { Name = user.username });
+                            }
+                        }
+                    }
+                }
+            }
+            return Json(employees, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task setUserEmployeeIds(Company model)
+        {
+            foreach (var emp in model.Employees)
+            {
+                var usr = usersDao.GetUserByName(emp.Name);
+                usr.employeeid = emp.Id;
+                usersDao.updateUser(usr);
+            }
+            if (User.Identity.IsAuthenticated)
+            {
+                var user = usersDao.GetUserByName(User.Identity.Name);
+                await usersDao.SetUserNotification(User.Identity.Name, false);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult testCreateCompany(Company model)
+        {
+            //TEST code
+            foreach (var emp in model.Employees)
+            {
+                emp.Id = 1;
+            }
+            return Json(model);
+        }
+
+        public async Task<JsonResult> getEmployeeComments(int id)
+        {
+            List<CommentModel> comments = new List<CommentModel>();
+
+            var articles = await articlesDao.getArticles();
+
+            foreach (var article in articles)
+            {
+                foreach (var comment in article.comments)
+                {
+                    var usr = usersDao.GetUserByName(comment.author);
+                    if (usr.employeeid == id)
+                    {
+                        int voteValue = 0;
+                        foreach (var vote in comment.votes)
+                        {
+                            voteValue += vote.vote;
+                        }
+
+                        comments.Add(new CommentModel() { commentary = comment.commentary, vote = voteValue });
+                    }
+                }
+            }
+            return Json(comments, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult About()

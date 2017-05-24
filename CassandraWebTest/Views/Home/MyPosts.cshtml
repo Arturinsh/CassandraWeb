@@ -38,12 +38,57 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
+                <h2>Do you want to create new company?</h2>
             </div>
             <div class="modal-body">
-                <h2>Do you want to ...</h2>
+
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Name</label>
+                        <div class="col-sm-10">
+                            <input class="form-control"
+                                   id="inputCompanyName" placeholder="Company Name" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Address</label>
+                        <div class="col-sm-10">
+                            <input class="form-control"
+                                   id="inputAddress" placeholder="Company Address" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Budget</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="number" value="0" min="0"
+                                   id="inputBudget" placeholder="Company Budget" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Login</label>
+                        <div class="col-sm-10">
+                            <input class="form-control"
+                                   id="inputLogin" placeholder="Company Login Credentials" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Password</label>
+                        <div class="col-sm-10">
+                            <input type="password" class="form-control"
+                                   id="inputPassword" placeholder="Company Password" />
+                        </div>
+                    </div>
+
+                </form>
+
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="denyNotification()">Nope</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="createComapny()">Create</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="denyNotification()">No</button>
             </div>
         </div>
     </div>
@@ -53,9 +98,7 @@
         $(document).ready(function () {
             $.ajax({
                 url: "/Home/showNotification", success: function (result) {
-                    console.log(result);
                     if (result == "True") {
-                        console.log("show");
                         $("#notificationModal").modal();
                     }
                 }
@@ -64,6 +107,26 @@
         function denyNotification() {
             $.ajax({
                 url: "/Home/removeNotification", success: function (result) {
+                }
+            });
+        }
+
+        function createComapny() {
+            $.ajax({
+                url: "/Home/getEmployees", success: function (result) {
+                    var company = {
+                        Name: $("#inputCompanyName").val(),
+                        AddressLine: $("#inputAddress").val(),
+                        Budget: $("#inputBudget").val(),
+                        Login: $("#inputLogin").val(),
+                        Password: $("#inputPassword").val(),
+                        employees: result
+                    };
+                    $.post("/Home/testCreateCompany", company, function (data, status) {
+                        $.post("/Home/setUserEmployeeIds", data, function (data, status) {
+                            alert("company created");
+                        });
+                    });
                 }
             });
         }

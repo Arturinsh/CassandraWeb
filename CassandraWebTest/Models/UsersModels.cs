@@ -16,6 +16,7 @@ namespace CassandraWebTest.Models
         public string fbkey { get; set; }
         public string gkey { get; set; }
         public bool notification { get; set; }
+        public int employeeid { get; set; }
     }
 
     [Table("test_keyspace.articles")]
@@ -51,6 +52,12 @@ namespace CassandraWebTest.Models
     public class Vote
     {
         public string username { get; set; }
+        public int vote { get; set; }
+    }
+
+    public class CommentModel
+    {
+        public string commentary { get; set; }
         public int vote { get; set; }
     }
 }

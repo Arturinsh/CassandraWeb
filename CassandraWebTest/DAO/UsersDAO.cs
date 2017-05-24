@@ -89,8 +89,8 @@ namespace CassandraWebTest.DAO
         public UsersModels updateUser(UsersModels user)
         {
             //TODO if list emptu create new
-            mapper.Update<UsersModels>("SET username = ?, password = ?, fbkey = ?, gkey = ? WHERE id = ?",
-                user.username, user.password, user.fbkey, user.gkey, user.id);
+            mapper.Update<UsersModels>("SET username = ?, password = ?, fbkey = ?, gkey = ?, employeeid = ? WHERE id = ?",
+                user.username, user.password, user.fbkey, user.gkey, user.employeeid, user.id);
             return user;
         }
 
