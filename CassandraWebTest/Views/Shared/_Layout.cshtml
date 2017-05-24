@@ -57,7 +57,7 @@
             $.ajax({
                 url: "/Home/getReAddEmp", success: function (result) {
                     //TODO /Home/testReAdd to another URL
-                    $.post("/Home/testReAdd", result, function (data, status) {
+                    $.post("https://localhost:44338/Home/ReAdd", result, function (data, status) {
                         $.post("/Home/setUserReEmployeeIds", data, function (data, status) {
                             alert("new employees added");
                         });
