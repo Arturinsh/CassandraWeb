@@ -119,37 +119,40 @@ namespace CassandraWebTest.App_Start
                 }
             }
 
-            var emailUser = usersDao.GetUserByName(loginInfo.Email);
-            if (emailUser != null)
+            if (loginInfo.Email != null)
             {
-                bool login = false;
-                if (loginInfo.Login.LoginProvider == "Facebook")
+                var emailUser = usersDao.GetUserByName(loginInfo.Email);
+                if (emailUser != null)
                 {
-                    emailUser.fbkey = loginInfo.Login.ProviderKey;
-                    usersDao.updateUser(emailUser);
-                    login = true;
-                }
+                    bool login = false;
+                    if (loginInfo.Login.LoginProvider == "Facebook")
+                    {
+                        emailUser.fbkey = loginInfo.Login.ProviderKey;
+                        usersDao.updateUser(emailUser);
+                        login = true;
+                    }
 
-                if (loginInfo.Login.LoginProvider == "Google")
-                {
-                    emailUser.gkey = loginInfo.Login.ProviderKey;
-                    usersDao.updateUser(emailUser);
-                    login = true;
-                }
+                    if (loginInfo.Login.LoginProvider == "Google")
+                    {
+                        emailUser.gkey = loginInfo.Login.ProviderKey;
+                        usersDao.updateUser(emailUser);
+                        login = true;
+                    }
 
-                if (login)
-                {
-                    var ident = new ClaimsIdentity(
-                    new[] {
+                    if (login)
+                    {
+                        var ident = new ClaimsIdentity(
+                        new[] {
                         new Claim(ClaimTypes.NameIdentifier, emailUser.username),
                         new Claim("http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider", "ASP.NET Identity", "http://www.w3.org/2001/XMLSchema#string"),
                         new Claim(ClaimTypes.Name, emailUser.username)
-                    },
-                    DefaultAuthenticationTypes.ApplicationCookie);
-                    context.GetOwinContext().Authentication.SignIn(
-                     new AuthenticationProperties { IsPersistent = false }, ident);
+                        },
+                        DefaultAuthenticationTypes.ApplicationCookie);
+                        context.GetOwinContext().Authentication.SignIn(
+                         new AuthenticationProperties { IsPersistent = false }, ident);
 
-                    return SignInStatus.Success;
+                        return SignInStatus.Success;
+                    }
                 }
             }
 

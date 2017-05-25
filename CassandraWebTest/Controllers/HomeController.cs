@@ -203,7 +203,7 @@ namespace CassandraWebTest.Controllers
         public async Task<JsonResult> getEmployees()
         {
             List<Employee> employees = new List<Employee>();
-            employees.Add(new Employee() { Name = User.Identity.Name });
+            employees.Add(new Employee() { Email = User.Identity.Name });
             if (User.Identity.IsAuthenticated)
             {
                 var articles = await articlesDao.getAuthorArticles(User.Identity.Name);
@@ -214,9 +214,9 @@ namespace CassandraWebTest.Controllers
                         var user = usersDao.GetUserByName(comment.author);
                         if (user.employeeid == 0)
                         {
-                            if (!employees.Exists(x => x.Name == user.username))
+                            if (!employees.Exists(x => x.Email == user.username))
                             {
-                                employees.Add(new Employee() { Name = user.username });
+                                employees.Add(new Employee() { Email = user.username });
                             }
                         }
                     }
@@ -230,7 +230,7 @@ namespace CassandraWebTest.Controllers
         {
             foreach (var emp in model.Employees)
             {
-                var usr = usersDao.GetUserByName(emp.Name);
+                var usr = usersDao.GetUserByName(emp.Email);
                 usr.employeeid = emp.Id;
                 usersDao.updateUser(usr);
             }
@@ -306,9 +306,9 @@ namespace CassandraWebTest.Controllers
                         var user = usersDao.GetUserByName(comment.author);
                         if (user.employeeid == 0)
                         {
-                            if (!employees.Exists(x => x.Name == user.username))
+                            if (!employees.Exists(x => x.Email == user.username))
                             {
-                                employees.Add(new Employee() { Name = user.username });
+                                employees.Add(new Employee() { Email = user.username });
                             }
                         }
                     }
@@ -322,11 +322,17 @@ namespace CassandraWebTest.Controllers
         [HttpPost]
         public void setUserReEmployeeIds(EmployeeReAdd model)
         {
-            foreach (var emp in model.Employees)
+            if (model.Employees != null)
             {
-                var usr = usersDao.GetUserByName(emp.Name);
-                usr.employeeid = emp.Id;
-                usersDao.updateUser(usr);
+                foreach (var emp in model.Employees)
+                {
+                    if (emp != null)
+                    {
+                        var usr = usersDao.GetUserByName(emp.Email);
+                        usr.employeeid = emp.Id;
+                        usersDao.updateUser(usr);
+                    }
+                }
             }
         }
 
